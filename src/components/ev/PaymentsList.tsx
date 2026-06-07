@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { ExternalLink, Zap } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import type { AgentEvent } from "@/lib/ev/types";
-import { formatKWh, formatUSDC, relativeTime, shortTx } from "@/lib/ev/format";
+import { formatKWh, formatEUR, relativeTime, shortTx } from "@/lib/ev/format";
 
 interface Props {
   events: AgentEvent[];
@@ -50,7 +50,7 @@ export function PaymentsList({ events }: Props) {
             transition={{ duration: 0.6 }}
             className="tabular text-lg font-bold"
           >
-            {formatUSDC(total)}
+            {formatEUR(total)}
           </motion.p>
         </div>
         <div className="text-right">
@@ -104,7 +104,7 @@ function PaymentRow({ e }: { e: AgentEvent }) {
       </div>
       <div className="min-w-0 flex-1">
         <p className="tabular text-sm font-semibold">
-          {formatKWh(e.kwh ?? 0)} kWh · {formatUSDC(e.price ?? 0)}
+          {formatKWh(e.kwh ?? 0)} kWh · {formatEUR(e.price ?? 0)}
         </p>
         <p className="text-xs text-muted-foreground">
           {relativeTime(e.ts)} · {shortTx(e.tx_id)}

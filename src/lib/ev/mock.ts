@@ -6,7 +6,7 @@ function randTx(): string {
   for (let i = 0; i < 52; i++) s += ALPHA[Math.floor(Math.random() * ALPHA.length)];
   return s;
 }
-const loraUrl = (id: string) => `https://lora.algokit.io/testnet/tx/${id}`;
+const loraUrl = (id: string) => `https://lora.algokit.io/mainnet/tx/${id}`;
 
 const PRICE = 0.012;
 const CHUNK = 1;
@@ -29,7 +29,7 @@ const seedEvents: AgentEvent[] = [
   {
     ts: seedTs - 3600,
     type: "PAYMENT" as const,
-    message: "Paid 0.012 USDC for 1.00 kWh",
+    message: "Paid 0.012 EURD for 1.00 kWh",
     kwh: 1,
     price: 0.012,
     tx_id: randTx(),
@@ -37,7 +37,7 @@ const seedEvents: AgentEvent[] = [
   {
     ts: seedTs - 3500,
     type: "PAYMENT" as const,
-    message: "Paid 0.012 USDC for 1.00 kWh",
+    message: "Paid 0.012 EURD for 1.00 kWh",
     kwh: 1,
     price: 0.012,
     tx_id: randTx(),
@@ -45,7 +45,7 @@ const seedEvents: AgentEvent[] = [
   {
     ts: seedTs - 3400,
     type: "PAYMENT" as const,
-    message: "Paid 0.012 USDC for 1.00 kWh",
+    message: "Paid 0.012 EURD for 1.00 kWh",
     kwh: 1,
     price: 0.012,
     tx_id: randTx(),
@@ -111,7 +111,7 @@ function tick() {
     store.events.unshift({
       ts: Math.floor(Date.now() / 1000),
       type: "PAYMENT",
-      message: `Paid ${(PRICE * CHUNK).toFixed(3)} USDC for ${CHUNK.toFixed(2)} kWh`,
+      message: `Paid ${(PRICE * CHUNK).toFixed(3)} EURD for ${CHUNK.toFixed(2)} kWh`,
       kwh: CHUNK,
       price: PRICE * CHUNK,
       tx_id: tx,
@@ -148,7 +148,7 @@ export function getMockState(): AgentState {
       ? state === "EVALUATING"
         ? "Evaluating next chunk…"
         : state === "PAYING"
-          ? `Paying ${(PRICE * CHUNK).toFixed(3)} USDC for ${CHUNK.toFixed(2)} kWh`
+          ? `Paying ${(PRICE * CHUNK).toFixed(3)} EURD for ${CHUNK.toFixed(2)} kWh`
           : `Delivering ${CHUNK.toFixed(2)} kWh`
       : store.lastSummary
         ? "Session complete"
@@ -173,6 +173,6 @@ export function getMockWallet(): WalletInfo {
     asset_symbol: "EURD",
     asset_id: 1221682136,
     decimals: 2,
-    network: "testnet",
+    network: "mainnet",
   };
 }
