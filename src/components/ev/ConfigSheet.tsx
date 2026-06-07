@@ -36,7 +36,7 @@ export function ConfigSheet({ defaults, onChange }: Props) {
         />
         <Field
           label="Max price"
-          suffix="$ / kWh"
+          suffix="€ / kWh"
           value={maxPrice}
           step={0.005}
           min={0.001}
@@ -46,7 +46,7 @@ export function ConfigSheet({ defaults, onChange }: Props) {
         />
         <Field
           label="Session budget"
-          suffix="USDC"
+          suffix="EURD"
           value={budget}
           step={1}
           min={0.1}
