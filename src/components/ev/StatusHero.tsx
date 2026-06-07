@@ -60,15 +60,15 @@ export function StatusHero({ state }: Props) {
   const h = headline(state);
 
   return (
-    <div className="flex items-center gap-5 px-1 py-2">
+    <div className="flex items-center gap-4 px-1 py-1.5">
       <div className="relative shrink-0">
         <motion.div
           className={`absolute inset-0 scale-125 rounded-full ${t.glow}`}
           animate={charging ? { opacity: [0.6, 1, 0.6], scale: [1.15, 1.35, 1.15] } : { opacity: [0.5, 0.9, 0.5] }}
           transition={{ duration: charging ? 1.4 : 2.4, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div className={`relative flex h-14 w-14 items-center justify-center rounded-full border bg-background shadow-sm ${t.ring}`}>
-          <svg viewBox="0 0 24 24" className={`h-6 w-6 fill-current ${t.icon}`} xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <div className={`relative flex h-12 w-12 items-center justify-center rounded-full border bg-background shadow-sm ${t.ring}`}>
+          <svg viewBox="0 0 24 24" className={`h-5 w-5 fill-current ${t.icon}`} xmlns="http://www.w3.org/2000/svg" aria-hidden>
             <path d="M13 10V3L4 14H11V21L20 10H13Z" />
           </svg>
         </div>
@@ -82,7 +82,7 @@ export function StatusHero({ state }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.2 }}
-            className="mb-1 inline-flex"
+            className="mb-0.5 inline-flex"
           >
             <span
               className={`rounded-sm px-1.5 py-0.5 text-[10px] font-medium uppercase leading-none tracking-[0.12em] ${t.chipBg} ${t.chipText}`}
@@ -100,13 +100,13 @@ export function StatusHero({ state }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.25 }}
-            className="text-xl font-semibold leading-tight tracking-tight text-foreground"
+            className="text-lg font-semibold leading-tight tracking-tight text-foreground"
           >
             {h}
           </motion.h2>
         </AnimatePresence>
 
-        <p className="mt-1 line-clamp-2 text-[13px] leading-snug text-muted-foreground">{sub(state)}</p>
+        <p className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-muted-foreground">{sub(state)}</p>
       </div>
     </div>
   );
