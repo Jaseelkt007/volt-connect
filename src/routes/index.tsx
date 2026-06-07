@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { Header } from "@/components/ev/Header";
-import { StatusHero } from "@/components/ev/StatusHero";
+
 import { ConnectionCard } from "@/components/ev/ConnectionCard";
 import { ConfigSheet } from "@/components/ev/ConfigSheet";
 import { LivePanel } from "@/components/ev/LivePanel";
