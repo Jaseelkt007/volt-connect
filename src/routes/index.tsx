@@ -118,7 +118,6 @@ function Index() {
             />
 
             <WalletCard wallet={wallet} pricePerKwh={state?.price_per_kwh ?? 0} />
-            {state && <TelemetryTiles state={state} />}
 
             {isActive && state ? (
               <LivePanel state={state} paymentCount={paymentCount} />
@@ -127,6 +126,8 @@ function Index() {
             ) : (
               <ConfigSheet defaults={cfg} onChange={setCfg} />
             )}
+
+            {state && <TelemetryTiles state={state} />}
 
             {state && <SavingsCard state={state} />}
             <AgentReasoningFeed events={events} active={isActive} />
