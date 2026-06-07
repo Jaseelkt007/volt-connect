@@ -110,14 +110,12 @@ function Index() {
           <Skeleton />
         ) : (
           <>
-            <StatusHero state={state} />
+            <WalletCard wallet={wallet} pricePerKwh={state?.price_per_kwh ?? 0} />
             <ConnectionCard
               connected={charger}
               availableKwh={state?.available_kwh ?? 0}
               pricePerKwh={state?.price_per_kwh ?? 0}
             />
-
-            <WalletCard wallet={wallet} pricePerKwh={state?.price_per_kwh ?? 0} />
 
             {isActive && state ? (
               <LivePanel state={state} paymentCount={paymentCount} />
