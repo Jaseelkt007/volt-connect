@@ -1,52 +1,14 @@
-# ConnectionCard — gradient + design refresh
+Refactor `src/components/ev/StatusHero.tsx` to match the chosen v3 "Mono status chip" direction:
 
-Scope: only `src/components/ev/ConnectionCard.tsx` (and 1–2 token additions in `src/styles.css`). No logic, no API, no other components.
+- **Icon area:** Replace the gradient-to-br animated ring with a softer, state-colored pulsing glow (`bg-{state}/10` with `animate-pulse`) behind a clean white 56 px circle (`bg-white`, `shadow-sm`, `border-{state}/30`). Keep the lightning glyph but swap the emoji for a small inline SVG filled in the state color.
+- **Status chip:** Add a small uppercase monospace label above the headline (e.g. "Idle", "Charging") in a pill/chip style (`bg-{state}/10`, `text-{state}`, `rounded-sm`, `font-mono`). Map each `LifecycleState` + disconnected/null to its label and color token (solar, energy, sky, destructive, muted-foreground).
+- **Typography:** Reduce headline from `text-[26px] font-bold` to `text-xl font-semibold tracking-tight leading-none`. Keep sub-copy at `text-[13px] leading-snug text-muted-foreground`.
+- **Layout:** Shift from the current asymmetric alignment to a compact horizontal flex (`items-center gap-5`), so the icon sits beside the text block instead of floating left with heavy whitespace.
+- **Animations:** Preserve `AnimatePresence` cross-fade on headline/sub changes. Keep the `motion.div` ring pulse for the charging heartbeat, but simplify the idle ring to a gentle CSS pulse.
+- **Font:** Add a Google Fonts `<link>` for JetBrains Mono (`wght@500`) in `src/routes/__root.tsx` so the status chip renders with the intended monospace face. The link array already has `preconnect` stubs for Google Fonts.
 
-## What changes
-
-Replace the flat pale-mint `bg-energy/[0.06]` card with a **dark green left-to-right gradient hero card** when the charger is connected. Disconnected state stays calm/neutral so the contrast makes "connected" feel like a real status change.
-
-### Connected state (new look)
-
-- Background: linear-gradient 90deg from a deep forest green → vivid energy green → a soft warm highlight on the far right (suggesting sun + energy flowing in). Stored as `--gradient-connected` token in `src/styles.css`.
-- Foreground text becomes white / white-80 for contrast (use `text-white` only inside this gradient surface; rest of app keeps tokens).
-- Check badge: frosted white circle (`bg-white/15` + `backdrop-blur` + thin white ring) with the ✓ in white — replaces the solid green pill on green which currently disappears.
-- Subtle inner top highlight (`shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]`) and an outer soft green glow (`shadow-[0_10px_30px_-12px_rgba(20,140,90,0.45)]`) for depth.
-- A faint animated shimmer line sweeping L→R every ~4s (pure CSS keyframes, respects `prefers-reduced-motion`) — reinforces "energy flowing".
-- Decorative lightning glyph at far right at low opacity as a watermark.
-- Divider between header and stats becomes `border-white/15`.
-- Stats row: "Available" and "Price" labels in `text-white/60` uppercase; values in white, tabular. A thin vertical white/15 divider between the two cells instead of just spacing.
-
-### Disconnected state (tightened)
-
-- Stays light, but upgrade from flat gray to a very subtle top-down `from-surface to-card` gradient with a dashed border to imply "waiting / empty slot".
-- Plug emoji sits in a dashed-ring circle.
-- One-line copy unchanged.
-
-## Token additions (src/styles.css)
-
-```css
-:root {
-  --gradient-connected: linear-gradient(
-    90deg,
-    oklch(0.30 0.09 155) 0%,
-    oklch(0.55 0.17 152) 55%,
-    oklch(0.78 0.14 110) 100%
-  );
-}
-@keyframes ev-sweep { 0% { transform: translateX(-100%);} 100% { transform: translateX(200%);} }
-@utility ev-sweep { animation: ev-sweep 4s ease-in-out infinite; }
-```
-
-## Out of scope
-
-- No changes to `StatusHero`, `LivePanel`, header, or other cards.
-- No theme-wide color changes; the gradient is local to this card.
-- No new dependencies (uses existing `motion` only if needed; CSS keyframes are enough).
-
-## Acceptance
-
-- Connected card reads as a premium dark-green hero with clear white text.
-- Disconnected card reads as a calm, empty slot — clearly different from connected.
-- Works on a 480px mobile width without overflow; values stay tabular.
-- Reduced-motion users get no shimmer.
+Acceptance:
+- IDLE state shows the white ring + amber glow + "Idle" chip + "Ready to charge" headline.
+- CHARGING state shows the green glow + "Charging" chip + headline updates with kWh delivered.
+- No layout shift or overflow on a 390 px-wide viewport.
+- Existing `ringClass` and `headline`/`sub` logic remain intact; only the JSX structure and visual polish change.

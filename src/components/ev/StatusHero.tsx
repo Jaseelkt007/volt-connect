@@ -5,6 +5,8 @@ interface Props {
   state: AgentState | null;
 }
 
+type Tone = "muted" | "solar" | "energy" | "sky" | "destructive";
+
 function headline(s: AgentState | null): string {
   if (!s) return "Loading…";
   if (!s.charger_connected) return "Plug in to begin";
@@ -25,44 +27,86 @@ function sub(s: AgentState | null): string {
   return s.decision_reason || "Working…";
 }
 
-const ringClass: Record<LifecycleState, string> = {
-  IDLE: "from-neutral-200 to-neutral-300",
-  EVALUATING: "from-solar to-amber-300",
-  PAYING: "from-solar to-amber-300",
-  CHARGING: "from-energy to-emerald-300",
-  WAITING: "from-sky-300 to-sky-200",
-  ERROR: "from-destructive to-red-300",
+function chipLabel(s: AgentState | null): string {
+  if (!s) return "Sync";
+  if (!s.charger_connected) return "Unplugged";
+  return s.state.charAt(0) + s.state.slice(1).toLowerCase();
+}
+
+const toneFor = (s: AgentState | null): Tone => {
+  if (!s || !s.charger_connected) return "muted";
+  switch (s.state) {
+    case "IDLE": return "solar";
+    case "EVALUATING":
+    case "PAYING": return "solar";
+    case "CHARGING": return "energy";
+    case "WAITING": return "sky";
+    case "ERROR": return "destructive";
+  }
+};
+
+const toneStyles: Record<Tone, { glow: string; ring: string; icon: string; chipBg: string; chipText: string }> = {
+  muted:       { glow: "bg-neutral-300/30",     ring: "border-neutral-300",          icon: "text-neutral-500",     chipBg: "bg-neutral-100",        chipText: "text-neutral-600" },
+  solar:       { glow: "bg-solar/20",           ring: "border-solar/40",             icon: "text-solar",           chipBg: "bg-solar/10",           chipText: "text-amber-700" },
+  energy:      { glow: "bg-energy/20",          ring: "border-energy/40",            icon: "text-energy",          chipBg: "bg-energy/10",          chipText: "text-emerald-700" },
+  sky:         { glow: "bg-sky-300/30",         ring: "border-sky-300",              icon: "text-sky-500",         chipBg: "bg-sky-100",            chipText: "text-sky-700" },
+  destructive: { glow: "bg-destructive/20",     ring: "border-destructive/40",       icon: "text-destructive",     chipBg: "bg-destructive/10",     chipText: "text-destructive" },
 };
 
 export function StatusHero({ state }: Props) {
-  const cls = state ? ringClass[state.state] : ringClass.IDLE;
+  const tone = toneFor(state);
+  const t = toneStyles[tone];
   const charging = state?.state === "CHARGING";
+  const h = headline(state);
+
   return (
-    <div className="flex items-center gap-4 px-1 py-2">
-      <div className="relative flex h-16 w-16 shrink-0 items-center justify-center">
+    <div className="flex items-center gap-5 px-1 py-2">
+      <div className="relative shrink-0">
         <motion.div
-          className={`absolute inset-0 rounded-full bg-gradient-to-br ${cls} opacity-80`}
-          animate={charging ? { scale: [1, 1.08, 1] } : { scale: 1 }}
-          transition={{ duration: 1.6, repeat: Infinity }}
+          className={`absolute inset-0 scale-125 rounded-full ${t.glow}`}
+          animate={charging ? { opacity: [0.6, 1, 0.6], scale: [1.15, 1.35, 1.15] } : { opacity: [0.5, 0.9, 0.5] }}
+          transition={{ duration: charging ? 1.4 : 2.4, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-background text-2xl shadow-sm">
-          ⚡
+        <div className={`relative flex h-14 w-14 items-center justify-center rounded-full border bg-background shadow-sm ${t.ring}`}>
+          <svg viewBox="0 0 24 24" className={`h-6 w-6 fill-current ${t.icon}`} xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path d="M13 10V3L4 14H11V21L20 10H13Z" />
+          </svg>
         </div>
       </div>
+
       <div className="min-w-0 flex-1">
         <AnimatePresence mode="wait">
+          <motion.div
+            key={chipLabel(state)}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2 }}
+            className="mb-1 inline-flex"
+          >
+            <span
+              className={`rounded-sm px-1.5 py-0.5 text-[10px] font-medium uppercase leading-none tracking-[0.12em] ${t.chipBg} ${t.chipText}`}
+              style={{ fontFamily: '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace' }}
+            >
+              {chipLabel(state)}
+            </span>
+          </motion.div>
+        </AnimatePresence>
+
+        <AnimatePresence mode="wait">
           <motion.h2
-            key={headline(state)}
+            key={h}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.25 }}
-            className="text-[26px] font-bold leading-tight tracking-tight"
+            className="text-xl font-semibold leading-tight tracking-tight text-foreground"
           >
-            {headline(state)}
+            {h}
           </motion.h2>
         </AnimatePresence>
-        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{sub(state)}</p>
+
+        <p className="mt-1 line-clamp-2 text-[13px] leading-snug text-muted-foreground">{sub(state)}</p>
       </div>
     </div>
   );
