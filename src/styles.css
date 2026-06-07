@@ -126,3 +126,9 @@
 @utility ev-indeterminate-bar {
   animation: ev-bar 1.4s ease-in-out infinite;
 }
+@utility ev-sweep {
+  animation: ev-sweep 4.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ev-sweep, .ev-pulse { animation: none !important; }
+}
