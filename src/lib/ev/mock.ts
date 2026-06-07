@@ -28,7 +28,7 @@ const seedTs = Math.floor(Date.now() / 1000);
 const seedEvents: AgentEvent[] = [
   {
     ts: seedTs - 3600,
-    type: "PAYMENT",
+    type: "PAYMENT" as const,
     message: "Paid 0.012 USDC for 1.00 kWh",
     kwh: 1,
     price_usdc: 0.012,
@@ -36,7 +36,7 @@ const seedEvents: AgentEvent[] = [
   },
   {
     ts: seedTs - 3500,
-    type: "PAYMENT",
+    type: "PAYMENT" as const,
     message: "Paid 0.012 USDC for 1.00 kWh",
     kwh: 1,
     price_usdc: 0.012,
@@ -44,7 +44,7 @@ const seedEvents: AgentEvent[] = [
   },
   {
     ts: seedTs - 3400,
-    type: "PAYMENT",
+    type: "PAYMENT" as const,
     message: "Paid 0.012 USDC for 1.00 kWh",
     kwh: 1,
     price_usdc: 0.012,
