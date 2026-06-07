@@ -1,4 +1,4 @@
-import type { AgentEvent, AgentState, StartChargePayload } from "./types";
+import type { AgentEvent, AgentState, StartChargePayload, WalletInfo } from "./types";
 
 export const AGENT_URL =
   (import.meta.env.VITE_AGENT_URL as string | undefined) ?? "http://localhost:4022";
@@ -41,4 +41,15 @@ export async function startCharge(payload: StartChargePayload): Promise<void> {
 
 export async function stopCharge(): Promise<void> {
   await fetch(`${AGENT_URL}/charge/stop`, { method: "POST" });
+}
+
+export async function fetchWallet(): Promise<WalletInfo> {
+  const c = ctrl();
+  try {
+    const r = await fetch(`${AGENT_URL}/wallet`, { signal: c.signal });
+    if (!r.ok) throw new Error(`wallet ${r.status}`);
+    return (await r.json()) as WalletInfo;
+  } finally {
+    c.done();
+  }
 }

@@ -15,7 +15,7 @@ export function PaymentsList({ events }: Props) {
   const others = useMemo(() => events.filter((e) => e.type !== "PAYMENT"), [events]);
 
   const total = useMemo(
-    () => payments.reduce((acc, e) => acc + (e.price_usdc ?? 0), 0),
+    () => payments.reduce((acc, e) => acc + (e.price ?? 0), 0),
     [payments],
   );
   const totalKwh = useMemo(
@@ -104,7 +104,7 @@ function PaymentRow({ e }: { e: AgentEvent }) {
       </div>
       <div className="min-w-0 flex-1">
         <p className="tabular text-sm font-semibold">
-          {formatKWh(e.kwh ?? 0)} kWh · {formatUSDC(e.price_usdc ?? 0)}
+          {formatKWh(e.kwh ?? 0)} kWh · {formatUSDC(e.price ?? 0)}
         </p>
         <p className="text-xs text-muted-foreground">
           {relativeTime(e.ts)} · {shortTx(e.tx_id)}

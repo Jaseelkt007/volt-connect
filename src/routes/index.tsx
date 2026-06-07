@@ -9,8 +9,13 @@ import { LivePanel } from "@/components/ev/LivePanel";
 import { SessionSummary } from "@/components/ev/SessionSummary";
 import { PaymentsList } from "@/components/ev/PaymentsList";
 import { BottomCTA } from "@/components/ev/BottomCTA";
+import { WalletCard } from "@/components/ev/WalletCard";
+import { TelemetryTiles } from "@/components/ev/TelemetryTiles";
+import { SavingsCard } from "@/components/ev/SavingsCard";
+import { AgentReasoningFeed } from "@/components/ev/AgentReasoningFeed";
 import { usePolling } from "@/lib/ev/usePolling";
-import { formatUSDC } from "@/lib/ev/format";
+import { useWallet } from "@/lib/ev/useWallet";
+import { formatEUR } from "@/lib/ev/format";
 import type { StartChargePayload } from "@/lib/ev/types";
 
 export const Route = createFileRoute("/")({
@@ -29,6 +34,7 @@ const ACTIVE_STATES = new Set(["EVALUATING", "PAYING", "CHARGING"]);
 
 function Index() {
   const { state, events, isDemo, isOnline, loading, start, stop } = usePolling();
+  const wallet = useWallet();
 
   const [cfg, setCfg] = useState<StartChargePayload>({
     chunk_kwh: 1,
@@ -54,7 +60,7 @@ function Index() {
       if (e.type !== "PAYMENT" || !e.tx_id) continue;
       if (!seenTxRef.current.has(e.tx_id)) {
         seenTxRef.current.add(e.tx_id);
-        toast(`⚡ Bought ${(e.kwh ?? 0).toFixed(2)} kWh — ${formatUSDC(e.price_usdc ?? 0)}`);
+        toast(`⚡ Bought ${(e.kwh ?? 0).toFixed(2)} kWh — ${formatEUR(e.price ?? 0)}`);
       }
     }
   }, [events]);
@@ -65,7 +71,7 @@ function Index() {
     if (prevActiveRef.current && !active && state && state.session_kwh > 0) {
       setLastSummary({
         kwh: state.session_kwh,
-        spent: state.session_spent_usdc,
+        spent: state.session_spent,
         payments: paymentCount,
       });
     }
@@ -111,6 +117,9 @@ function Index() {
               pricePerKwh={state?.price_per_kwh ?? 0}
             />
 
+            <WalletCard wallet={wallet} pricePerKwh={state?.price_per_kwh ?? 0} />
+            {state && <TelemetryTiles state={state} />}
+
             {isActive && state ? (
               <LivePanel state={state} paymentCount={paymentCount} />
             ) : lastSummary ? (
@@ -118,6 +127,9 @@ function Index() {
             ) : (
               <ConfigSheet defaults={cfg} onChange={setCfg} />
             )}
+
+            {state && <SavingsCard state={state} />}
+            <AgentReasoningFeed events={events} active={isActive} />
 
             <PaymentsList events={events} />
           </>

@@ -5,9 +5,27 @@ export function formatUSDC(n: number): string {
   return `$${trimmed === "" ? "0" : trimmed}`;
 }
 
+// Payment asset is EURD (a euro stablecoin), so amounts read in euros.
+export function formatEUR(n: number): string {
+  if (!Number.isFinite(n)) return "€0";
+  const s = n.toFixed(6);
+  const trimmed = s.replace(/\.?0+$/, "");
+  return `€${trimmed === "" ? "0" : trimmed}`;
+}
+
 export function formatKWh(n: number): string {
   if (!Number.isFinite(n)) return "0.00";
   return n.toFixed(2);
+}
+
+export function formatPct(n: number): string {
+  if (!Number.isFinite(n)) return "0%";
+  return `${Math.round(n)}%`;
+}
+
+export function formatKg(n: number): string {
+  if (!Number.isFinite(n)) return "0 kg";
+  return n < 1 ? `${(n * 1000).toFixed(0)} g` : `${n.toFixed(2)} kg`;
 }
 
 export function shortTx(id?: string): string {

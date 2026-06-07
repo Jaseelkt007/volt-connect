@@ -1,4 +1,4 @@
-import type { AgentEvent, AgentState, LifecycleState } from "./types";
+import type { AgentEvent, AgentState, LifecycleState, WalletInfo } from "./types";
 
 const ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 function randTx(): string {
@@ -31,7 +31,7 @@ const seedEvents: AgentEvent[] = [
     type: "PAYMENT" as const,
     message: "Paid 0.012 USDC for 1.00 kWh",
     kwh: 1,
-    price_usdc: 0.012,
+    price: 0.012,
     tx_id: randTx(),
   },
   {
@@ -39,7 +39,7 @@ const seedEvents: AgentEvent[] = [
     type: "PAYMENT" as const,
     message: "Paid 0.012 USDC for 1.00 kWh",
     kwh: 1,
-    price_usdc: 0.012,
+    price: 0.012,
     tx_id: randTx(),
   },
   {
@@ -47,7 +47,7 @@ const seedEvents: AgentEvent[] = [
     type: "PAYMENT" as const,
     message: "Paid 0.012 USDC for 1.00 kWh",
     kwh: 1,
-    price_usdc: 0.012,
+    price: 0.012,
     tx_id: randTx(),
   },
 ].map((e) => ({ ...e, lora_url: loraUrl(e.tx_id!) }));
@@ -105,10 +105,15 @@ function tick() {
     store.lastTx = tx;
     store.events.unshift({
       ts: Math.floor(Date.now() / 1000),
+      type: "DECISION",
+      message: `Price ${PRICE.toFixed(3)} ≤ cap 0.050 → buying ${CHUNK.toFixed(2)} kWh`,
+    });
+    store.events.unshift({
+      ts: Math.floor(Date.now() / 1000),
       type: "PAYMENT",
       message: `Paid ${(PRICE * CHUNK).toFixed(3)} USDC for ${CHUNK.toFixed(2)} kWh`,
       kwh: CHUNK,
-      price_usdc: PRICE * CHUNK,
+      price: PRICE * CHUNK,
       tx_id: tx,
       lora_url: loraUrl(tx),
     });
@@ -133,11 +138,11 @@ export function getMockState(): AgentState {
     price_per_kwh: PRICE,
     available_kwh: 8.4,
     delivery_remaining_kwh: store.active && state === "CHARGING" ? Math.min(CHUNK, remaining) : 0,
-    budget_remaining_usdc: Math.max(0, 5 - store.sessionSpent),
+    budget_remaining: Math.max(0, 5 - store.sessionSpent),
     max_price_per_kwh: 0.05,
     chunk_kwh: CHUNK,
     session_kwh: store.sessionKwh,
-    session_spent_usdc: store.sessionSpent,
+    session_spent: store.sessionSpent,
     last_tx_id: store.lastTx,
     decision_reason: store.active
       ? state === "EVALUATING"
@@ -157,4 +162,17 @@ export function getMockEvents(): AgentEvent[] {
 
 export function getMockLastSummary() {
   return store.lastSummary;
+}
+
+export function getMockWallet(): WalletInfo {
+  return {
+    configured: true,
+    address: "HYHQP6GEYGBAGYJ4VOYBV7S6WGQC3TPBRVLIGWIU755N7RGQ6IOJCJ3QSA",
+    algo: 4.873,
+    balance: Math.max(0, 5 - store.sessionSpent),
+    asset_symbol: "EURD",
+    asset_id: 1221682136,
+    decimals: 2,
+    network: "testnet",
+  };
 }

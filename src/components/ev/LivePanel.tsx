@@ -43,7 +43,7 @@ export function LivePanel({ state, paymentCount }: Props) {
       </div>
 
       <div className="mt-5 grid grid-cols-3 gap-3">
-        <Metric label="Spent" value={formatUSDC(state.session_spent_usdc)} accent />
+        <Metric label="Spent" value={formatUSDC(state.session_spent)} accent />
         <Metric label="Payments" value={String(paymentCount)} />
         <Metric label="Remaining chunk" value={`${formatKWh(state.delivery_remaining_kwh)} kWh`} />
       </div>
