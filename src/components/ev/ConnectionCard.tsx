@@ -9,9 +9,9 @@ interface Props {
 export function ConnectionCard({ connected, availableKwh, pricePerKwh }: Props) {
   if (!connected) {
     return (
-      <div className="rounded-2xl border bg-card p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+      <div className="rounded-2xl border border-dashed border-neutral-300 bg-gradient-to-b from-surface to-card p-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100 text-2xl">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-neutral-300 bg-background text-2xl">
             🔌
           </div>
           <div>
@@ -23,24 +23,39 @@ export function ConnectionCard({ connected, availableKwh, pricePerKwh }: Props) 
     );
   }
   return (
-    <div className="rounded-2xl border border-energy/20 bg-energy/[0.06] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
-      <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-energy text-white">
+    <div
+      className="relative overflow-hidden rounded-2xl p-5 text-white shadow-[0_12px_32px_-14px_rgba(20,140,90,0.55),inset_0_1px_0_rgba(255,255,255,0.18)]"
+      style={{ backgroundImage: "var(--gradient-connected)" }}
+    >
+      {/* Watermark glyph */}
+      <div className="pointer-events-none absolute -right-2 -top-2 text-[120px] leading-none opacity-[0.07] select-none">
+        ⚡
+      </div>
+      {/* Sweep shimmer */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="ev-sweep absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+      </div>
+
+      <div className="relative flex items-center gap-3">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-inset ring-white/30 backdrop-blur-sm">
           ✓
         </div>
-        <div className="flex-1">
-          <p className="text-base font-semibold text-foreground">Charger connected</p>
-          <p className="text-sm text-muted-foreground">Ready to receive energy from this stall.</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-base font-semibold tracking-tight">Charger connected</p>
+          <p className="text-sm text-white/75">Ready to receive energy from this stall.</p>
         </div>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-3 border-t border-energy/15 pt-3">
+
+      <div className="relative mt-4 grid grid-cols-2 gap-3 border-t border-white/15 pt-3">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-wide text-hint">Available</p>
+          <p className="text-[11px] font-medium uppercase tracking-wider text-white/60">Available</p>
           <p className="tabular text-base font-semibold">{formatKWh(availableKwh)} kWh</p>
         </div>
-        <div>
-          <p className="text-[11px] font-medium uppercase tracking-wide text-hint">Price</p>
-          <p className="tabular text-base font-semibold">{formatUSDC(pricePerKwh)} <span className="text-xs font-normal text-muted-foreground">/ kWh</span></p>
+        <div className="border-l border-white/15 pl-3">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-white/60">Price</p>
+          <p className="tabular text-base font-semibold">
+            {formatUSDC(pricePerKwh)} <span className="text-xs font-normal text-white/65">/ kWh</span>
+          </p>
         </div>
       </div>
     </div>
